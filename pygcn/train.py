@@ -48,9 +48,7 @@ if args.cuda:
     torch.cuda.manual_seed(args.seed)
 
 # Load data
-adj, features, labels, idx_train, idx_val, idx_test = (
-    load_data()
-)  # NOTE: load_data에서 features 불러오는 코드 수정함. 수정 전과 차이있는지 실행해서 확인 필요
+adj, features, labels, idx_train, idx_val, idx_test = load_data()
 
 # Model and optimizer
 model = GCN(
