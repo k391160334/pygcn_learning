@@ -1,7 +1,7 @@
 import math
 
 import torch
-
+from torch import nn
 from torch.nn.parameter import Parameter
 from torch.nn.modules.module import Module
 
@@ -15,7 +15,9 @@ class GraphConvolution(Module):
         super(GraphConvolution, self).__init__()
         self.in_features = in_features
         self.out_features = out_features
-        self.weight = Parameter(torch.FloatTensor(in_features, out_features))
+        self.weight = Parameter(
+            torch.FloatTensor(in_features, out_features)
+        )  # weight matrix
         if bias:
             self.bias = Parameter(torch.FloatTensor(out_features))
         else:
@@ -28,13 +30,13 @@ class GraphConvolution(Module):
         if self.bias is not None:
             self.bias.data.uniform_(-stdv, stdv)
 
-    def forward(self, input, adj):
-        support = torch.mm(input, self.weight)
-        output = torch.spmm(adj, support)
+    def forward(self, input, adj):  # input feature matrix, [node, in_features]
+        support = torch.mm(input, self.weight)  # [node, out_features]
+        output = torch.spmm(adj, support)  # [node, out_features]
         if self.bias is not None:
             return output + self.bias
         else:
-            return output
+            return output  # [node, out_features]
 
     def __repr__(self):
         return (
