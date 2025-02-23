@@ -17,7 +17,14 @@ def load_data(path="../data/cora/", dataset="cora"):
     idx_features_labels = np.genfromtxt(
         "{}{}.content".format(path, dataset), dtype=np.dtype(str)
     )
-    features = sp.csr_matrix(idx_features_labels[:, 1:-1], dtype=np.float32)
+    # 원본 코드에서는 idx_features_labels를 바로 sp.csr_matrix에 넘겨서 csr 형태로 만드는데, 원소가 str으로 인식되어 정상적인 csr 형태로 저장되지 않음.
+    # 따라서 str[][] 형태의 feature matrix를 float[][] 형태로 변환
+    feature_sparse_matrix = [
+        list(float(w) for w in d) for d in idx_features_labels[:, 1:-1]
+    ]
+    features = sp.csr_matrix(  # feature matrix with csr format
+        feature_sparse_matrix, dtype=np.float32
+    )  # feature_matrix는 sparse하다. 따라서 csr(compressed sparse row) 방식으로 다루어서 효율적으로 연산토록 함
     labels = encode_onehot(idx_features_labels[:, -1])
 
     # build graph
